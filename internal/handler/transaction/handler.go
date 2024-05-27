@@ -2,20 +2,45 @@ package transaction
 
 import (
 	"encoding/json"
-	"github.com/harssRajput/go_crud_sql/internal/model/transaction"
+	"github.com/gorilla/mux"
+	"github.com/harssRajput/go_crud_sql/internal/service"
+	"github.com/harssRajput/go_crud_sql/internal/service/account"
+	"github.com/harssRajput/go_crud_sql/internal/service/transaction"
 	"log"
 	"net/http"
 )
 
-func CreateTransaction(w http.ResponseWriter, r *http.Request) {
+type transactionHandler struct {
+	transactionService transaction.TransactionService
+	accountService     account.AccountService
+	logger             *log.Logger
+}
+
+func InitTransactionHandler(r *mux.Router, logger *log.Logger, serviceStore *service.ServiceStore) error {
+	th := &transactionHandler{
+		transactionService: serviceStore.TransactionService,
+		accountService:     serviceStore.AccountService,
+		logger:             logger,
+	}
+
+	addRoutes(r, th)
+	return nil
+}
+
+func addRoutes(r *mux.Router, th *transactionHandler) {
+	transactionsRouter := r.PathPrefix("/transactions").Subrouter().StrictSlash(true)
+	transactionsRouter.HandleFunc("/", th.CreateTransaction).Methods("POST")
+}
+
+func (th *transactionHandler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	var trx transaction.Transaction
 	err := json.NewDecoder(r.Body).Decode(&trx)
 	if err != nil {
-		log.Printf("Error decoding request: %v\n", err)
+		th.logger.Printf("Error decoding request: %v\n", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Printf("CreateTransaction request %v\n", trx)
+	th.logger.Printf("CreateTransaction request %v\n", trx)
 
 	//validation
 	if trx.Amount == 0 {
@@ -24,7 +49,7 @@ func CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the transaction
-	trxResponse, err := transaction.CreateTransaction(&trx)
+	trxResponse, err := th.transactionService.CreateTransaction(&trx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

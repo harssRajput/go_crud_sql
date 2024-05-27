@@ -1,12 +1,11 @@
 package server
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/harssRajput/go_crud_sql/internal/handler/account"
-	"github.com/harssRajput/go_crud_sql/internal/handler/transaction"
-	"io"
+	"github.com/harssRajput/go_crud_sql/internal/handler"
 	"log"
 	"net/http"
 	"os"
@@ -14,37 +13,67 @@ import (
 
 // TODO: put it in a config file. (optional: put separate config file based on envTYpe)
 const (
-	HTTP_PORT = "3333"
+	HTTP_PORT   = "3333"
+	DB_USERNAME = "root"
+	DB_PASSWORD = "root"
+	DB_HOST     = "127.0.0.1"
+	DB_PORT     = "3306"
+	DB_NAME     = "webapp"
 )
 
-func getOthers(w http.ResponseWriter, r *http.Request) {
-	log.Printf("request %s %s not matched any route\n", r.Method, r.URL.Path)
-	io.WriteString(w, "Whoops! That place seems to be off the map. How about trying a new spot?\n")
-}
-
+// TODO: introduce utilityStore (optional)
 func RunServer() {
-	initHttpServer()
+	logger, err := initLogger()
+	if err != nil {
+		logger.Fatal("Error initializing logger", err)
+	}
+
+	sqldb, err := initDB(logger)
+	if err != nil {
+		logger.Fatal("Error connecting to database", err)
+	}
+	defer sqldb.Close()
+
+	initHttpServer(sqldb, logger)
 }
 
-func initHttpServer() {
+func initHttpServer(sqldb *sql.DB, logger *log.Logger) {
 	r := mux.NewRouter()
+	err := handler.InitHandlers(r, sqldb, logger)
+	if err != nil {
+		logger.Fatalf("Error initializing handlers: %v\n", err)
+	}
 
-	accountsRouter := r.PathPrefix("/accounts").Subrouter().StrictSlash(true)
-	accountsRouter.HandleFunc("/", account.CreateAccount).Methods("POST")
-	accountsRouter.HandleFunc("/{id}", account.GetAccount).Methods("GET")
-
-	transactionsRouter := r.PathPrefix("/transactions").Subrouter().StrictSlash(true)
-	transactionsRouter.HandleFunc("/", transaction.CreateTransaction).Methods("POST")
-
-	//catch-all router
-	r.PathPrefix("/").HandlerFunc(getOthers)
 	//start listening
-	err := http.ListenAndServe(":"+HTTP_PORT, r)
+	err = http.ListenAndServe(":"+HTTP_PORT, r)
 	if errors.Is(err, http.ErrServerClosed) {
 		//TODO: put graceful shutdon if possible. (optional: not part of test)
-		fmt.Printf("server closed\n")
+		logger.Fatalf("server closed\n")
 	} else if err != nil {
-		fmt.Printf("error starting server: %s\n", err)
-		os.Exit(1)
+		logger.Fatalf("error starting server: %s\n", err)
 	}
+}
+
+func initDB(logger *log.Logger) (*sql.DB, error) {
+	dbUsername := DB_USERNAME
+	dbPassword := DB_PASSWORD
+	dbHost := DB_HOST
+	dbPort := DB_PORT
+	dbName := DB_NAME
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUsername, dbPassword, dbHost, dbPort, dbName)
+
+	db, err := sql.Open("mysql", dataSourceName)
+
+	err = db.Ping()
+	if err != nil {
+		logger.Fatal(err)
+	}
+	logger.Println("Connected to the database!")
+
+	return db, err
+}
+
+func initLogger() (*log.Logger, error) {
+	logger := log.New(os.Stdout, "webapp: ", log.Ldate|log.Ltime|log.Lshortfile)
+	return logger, nil
 }

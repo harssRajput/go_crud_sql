@@ -38,3 +38,9 @@ for README
 - what is pending/what can be added further.
 - - no boundary objects created for each API. using entity objects only. once entity/request objects gets complicated we can introduce boundary objects.
 - what is the approach taken for the project.
+
+
+- docker
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -v ./scripts/init.sql:/docker-entrypoint-initdb.d/1.sql -p 3306:3306 mysql
+
+Error 1062 (23000): Duplicate entry '12345678900' for key 'Account.document_number'
