@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/harssRajput/go_crud_sql/internal/handler/account"
+	"github.com/harssRajput/go_crud_sql/internal/handler/transaction"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
@@ -16,8 +18,8 @@ const (
 )
 
 func getOthers(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("request %s not matched any route\n", r.URL.Path)
-	io.WriteString(w, "You damn stumbled! unknown URL\n")
+	log.Printf("request %s %s not matched any route\n", r.Method, r.URL.Path)
+	io.WriteString(w, "Whoops! That place seems to be off the map. How about trying a new spot?\n")
 }
 
 func RunServer() {
@@ -30,6 +32,9 @@ func initHttpServer() {
 	accountsRouter := r.PathPrefix("/accounts").Subrouter().StrictSlash(true)
 	accountsRouter.HandleFunc("/", account.CreateAccount).Methods("POST")
 	accountsRouter.HandleFunc("/{id}", account.GetAccount).Methods("GET")
+
+	transactionsRouter := r.PathPrefix("/transactions").Subrouter().StrictSlash(true)
+	transactionsRouter.HandleFunc("/", transaction.CreateTransaction).Methods("POST")
 
 	//catch-all router
 	r.PathPrefix("/").HandlerFunc(getOthers)

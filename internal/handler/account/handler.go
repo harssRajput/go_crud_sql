@@ -15,15 +15,14 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 	accountId := vars["id"]
 	log.Printf("GetAccount request for accountId %s\n", accountId)
 
-	//validation
-	err := validateAccountId(accountId)
+	accountIdInt, err := strconv.Atoi(accountId)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Println("Invalid account ID", accountId)
+		http.Error(w, "Invalid account ID", http.StatusBadRequest)
 		return
 	}
 
 	// Retrieve the account information
-	accountIdInt, _ := strconv.Atoi(accountId)
 	acc, err := account.GetAccountByID(accountIdInt)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -54,7 +53,7 @@ func CreateAccount(w http.ResponseWriter, r *http.Request) {
 	log.Printf("CreateAccount request %v\n", acc)
 
 	//validation
-	err = validateDocumentNumber(acc.DocumentNumber)
+	err = ValidateDocumentNumber(acc.DocumentNumber)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
