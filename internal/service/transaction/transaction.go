@@ -3,39 +3,13 @@ package transaction
 import (
 	"database/sql"
 	"errors"
+	ent "github.com/harssRajput/go_crud_sql/internal/entity"
 	"log"
 	"time"
 )
 
-type OperationType struct {
-	OperationTypeID int    `json:"operation_type_id"`
-	Description     string `json:"description"`
-}
-
-const (
-	OperationTypeNormalPurchase      = 1
-	OperationTypeInstallmentPurchase = 2
-	OperationTypeWithdraw            = 3
-	OperationTypeCreditVoucher       = 4
-)
-
-var operationTypes = []OperationType{
-	{OperationTypeID: OperationTypeNormalPurchase, Description: "Normal Purchase"},
-	{OperationTypeID: OperationTypeInstallmentPurchase, Description: "Installment Purchase"},
-	{OperationTypeID: OperationTypeWithdraw, Description: "Withdraw"},
-	{OperationTypeID: OperationTypeCreditVoucher, Description: "credit voucher"}, // only this operation type is allowed to have positive amount
-}
-
-type Transaction struct {
-	TransactionID   int       `json:"transaction_id"`
-	AccountID       int       `json:"account_id"`
-	OperationTypeID int       `json:"operation_type_id"`
-	Amount          float64   `json:"amount"`
-	EventDate       time.Time `json:"event_date"` //event_date contains date and time accurate upto milliseconds in string format "2021-01-01T10:00:00.000Z"
-}
-
 type TransactionService interface {
-	CreateTransaction(transaction *Transaction) (*Transaction, error)
+	CreateTransaction(transaction *ent.Transaction) (*ent.Transaction, error)
 }
 
 type transactionService struct {
@@ -47,13 +21,13 @@ func InitTransactionService(sqldb *sql.DB, log *log.Logger) (TransactionService,
 	return &transactionService{sqldb: sqldb, logger: log}, nil
 }
 
-func (tx *transactionService) CreateTransaction(transaction *Transaction) (*Transaction, error) {
+func (tx *transactionService) CreateTransaction(transaction *ent.Transaction) (*ent.Transaction, error) {
 	// check if operation type exists
 	if opType, err := getOperationTypeByID(transaction.OperationTypeID); err != nil {
 		return nil, err
 	} else if opType == nil {
 		return nil, errors.New("operation type not found")
-	} else if opType.OperationTypeID == OperationTypeCreditVoucher {
+	} else if opType.OperationTypeID == ent.OperationTypeCreditVoucher {
 		if transaction.Amount <= 0 {
 			return nil, errors.New("credit voucher amount should be positive")
 		}
@@ -82,8 +56,8 @@ func (tx *transactionService) CreateTransaction(transaction *Transaction) (*Tran
 	return transaction, nil
 }
 
-func getOperationTypeByID(operationTypeID int) (*OperationType, error) {
-	for _, operationType := range operationTypes {
+func getOperationTypeByID(operationTypeID int) (*ent.OperationType, error) {
+	for _, operationType := range ent.OperationTypes {
 		if operationType.OperationTypeID == operationTypeID {
 			return &operationType, nil
 		}

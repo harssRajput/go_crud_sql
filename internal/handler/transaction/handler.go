@@ -3,9 +3,10 @@ package transaction
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/harssRajput/go_crud_sql/internal/service"
+	ent "github.com/harssRajput/go_crud_sql/internal/entity"
 	"github.com/harssRajput/go_crud_sql/internal/service/account"
 	"github.com/harssRajput/go_crud_sql/internal/service/transaction"
+	us "github.com/harssRajput/go_crud_sql/internal/utilityStore"
 	"log"
 	"net/http"
 )
@@ -16,14 +17,14 @@ type transactionHandler struct {
 	logger             *log.Logger
 }
 
-func InitTransactionHandler(r *mux.Router, logger *log.Logger, serviceStore *service.ServiceStore) error {
+func InitTransactionHandler(utilityStore *us.UtilityStore) error {
 	th := &transactionHandler{
-		transactionService: serviceStore.TransactionService,
-		accountService:     serviceStore.AccountService,
-		logger:             logger,
+		transactionService: utilityStore.ServiceStore.TransactionService,
+		accountService:     utilityStore.ServiceStore.AccountService,
+		logger:             utilityStore.Logger,
 	}
 
-	addRoutes(r, th)
+	addRoutes(utilityStore.HttpRouter, th)
 	return nil
 }
 
@@ -33,7 +34,7 @@ func addRoutes(r *mux.Router, th *transactionHandler) {
 }
 
 func (th *transactionHandler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
-	var trx transaction.Transaction
+	var trx ent.Transaction
 	err := json.NewDecoder(r.Body).Decode(&trx)
 	if err != nil {
 		th.logger.Printf("Error decoding request: %v\n", err)

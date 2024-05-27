@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/mux"
-	"github.com/harssRajput/go_crud_sql/internal/service"
+	ent "github.com/harssRajput/go_crud_sql/internal/entity"
 	"github.com/harssRajput/go_crud_sql/internal/service/account"
+	us "github.com/harssRajput/go_crud_sql/internal/utilityStore"
 	"log"
 	"net/http"
 	"strconv"
@@ -18,14 +19,14 @@ type accountHandler struct {
 	logger         *log.Logger
 }
 
-func InitAccountHandler(r *mux.Router, logger *log.Logger, serviceStore *service.ServiceStore) error {
+func InitAccountHandler(utilityStore *us.UtilityStore) error {
 
 	ah := &accountHandler{
-		accountService: serviceStore.AccountService,
-		logger:         logger,
+		accountService: utilityStore.ServiceStore.AccountService,
+		logger:         utilityStore.Logger,
 	}
 
-	addRoutes(r, ah)
+	addRoutes(utilityStore.HttpRouter, ah)
 	return nil
 }
 
@@ -73,7 +74,7 @@ func (ah *accountHandler) GetAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ah *accountHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
-	var acc account.Account
+	var acc ent.Account
 	err := json.NewDecoder(r.Body).Decode(&acc)
 	if err != nil {
 		ah.logger.Printf("Error decoding request: %v\n", err)
