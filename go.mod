@@ -1,6 +1,5 @@
-module go-crud
+module github.com/harssRajput/go_crud_sql
 
 go 1.21
 
-require (
-)
+require github.com/gorilla/mux v1.8.1
