@@ -25,6 +25,12 @@
 - `3306` - mysql port
 
 ### How to run app
+
+https://github.com/harssRajput/go_crud_sql/assets/82873133/65c3fb63-e068-4ff9-a583-582952007c82
+
+https://github.com/harssRajput/go_crud_sql/assets/82873133/4dbd6cbd-da2e-4b25-87c9-48ff7f369cd5
+
+
 1. clone the repo
 ```shell
 git clone git@github.com:harssRajput/go_crud_sql.git
@@ -48,6 +54,7 @@ Two type of test cases are written which are covering all the scenarios.
 2. Integration test cases - it covers end to end functionality of the APIs.
 
 #### How to run tests
+
 1. install docker and docker-compose. 
 2. take a clone and head over to the project directory as mentioned above in the [`How to run app`](#how-to-run-app) section.
 3. run the below command. it executes **all testcases** in the **docker container**.
