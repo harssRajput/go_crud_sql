@@ -40,7 +40,7 @@ func InitUtilityStore() (*UtilityStore, error) {
 }
 
 func initSQLDB(logger *log.Logger) (*sql.DB, error) {
-	dbUsername := DB_USERNAME
+	dbUsername := DB_USER
 	dbPassword := DB_PASSWORD
 	dbHost := DB_HOST
 	dbPort := DB_PORT

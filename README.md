@@ -44,3 +44,5 @@ for README
 docker run --name mysql -e MYSQL_ROOT_PASSWORD=root -v ./scripts/init.sql:/docker-entrypoint-initdb.d/1.sql -p 3306:3306 mysql
 
 Error 1062 (23000): Duplicate entry '12345678900' for key 'Account.document_number'
+8080 web port
+3306 mysql port
