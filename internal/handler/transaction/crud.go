@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	ent "github.com/harssRajput/go_crud_sql/internal/entity"
 	"net/http"
+	"strings"
 )
 
 func (th *transactionHandler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,11 @@ func (th *transactionHandler) CreateTransaction(w http.ResponseWriter, r *http.R
 	// Create the transaction
 	trxResponse, err := th.transactionService.CreateTransaction(&trx)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if strings.Contains(err.Error(), "foreign key constraint fails") || strings.Contains(err.Error(), "invalid amount") {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 

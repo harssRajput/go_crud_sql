@@ -11,3 +11,13 @@ var (
 	DB_PORT     = os.Getenv("DB_PORT")
 	DB_NAME     = os.Getenv("DB_NAME")
 )
+
+//
+//var (
+//	HTTP_PORT   = "8080"
+//	DB_USER     = "root"
+//	DB_PASSWORD = "root"
+//	DB_HOST     = "127.0.0.1"
+//	DB_PORT     = "3306"
+//	DB_NAME     = "webapp"
+//)
