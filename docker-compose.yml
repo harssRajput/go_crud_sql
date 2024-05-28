@@ -22,6 +22,8 @@ services:
       - .:/app
     working_dir: /app
     restart: always
+    networks:
+      - webnet
 
   mysql:
     image: mysql:8.0
@@ -33,3 +35,9 @@ services:
       - "3306:3306"
     volumes:
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/1.sql
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge

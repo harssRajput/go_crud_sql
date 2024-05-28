@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 	"time"
@@ -21,28 +22,30 @@ const (
 
 func TestMain(m *testing.M) {
 	// Setup Docker Compose
-	//log.Printf("starting Docker services...")
-	//cmd := exec.Command("docker-compose", "-f", "../docker-compose.yml", "up", "-d")
-	//err := cmd.Run()
-	//if err != nil {
-	//	log.Fatalf("Failed to start docker: %v", err)
-	//}
-	//
-	//// Wait for services to be ready
-	//time.Sleep(20 * time.Second) // Adjust as needed
-	//log.Printf("Docker services are ready")
+	log.Printf("starting Docker services...")
+	cmd := exec.Command("docker-compose", "-f", "../docker-compose.yml", "up", "-d")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Failed to start docker: %v", err)
+	}
+
+	// Wait for services to be ready
+	time.Sleep(20 * time.Second) // Adjust as needed
+	log.Printf("Docker services are ready")
 
 	// Run tests
 	code := m.Run()
 
 	// Teardown Docker Compose
 	//cmd = exec.Command("docker-compose", "-f", "../docker-compose.yml", "down")
-	//err = cmd.Run()
-	//if err != nil {
-	//	log.Fatalf("Failed to stop docker-compose: %v", err)
-	//}
-	//log.Printf("Docker services stopped")
-	// Exit with the result of the tests
+	cmd = exec.Command("docker", "stop", "mysql", "webapp")
+	err = cmd.Run()
+	if err != nil {
+		log.Fatalf("Failed to stop docker-compose : %v", err)
+	}
+	log.Printf("Docker services stopped")
+	time.Sleep(5 * time.Second) // Adjust as needed
+	//Exit with the result of the tests
 	os.Exit(code)
 }
 
