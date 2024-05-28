@@ -267,7 +267,7 @@ func Test_CreateTransaction(t *testing.T) {
 			},
 			want: ExpectedResponse{
 				httpStatus: http.StatusBadRequest,
-				err:        "invalid amount amount should be positive",
+				err:        "invalid amount amount should be negative for purchase and withdrawal operations",
 			},
 		},
 	}

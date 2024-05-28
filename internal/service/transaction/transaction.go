@@ -33,7 +33,7 @@ func (tx *transactionService) CreateTransaction(transaction *ent.Transaction) (*
 		}
 	} else if transaction.Amount >= 0 {
 		// amount should be negative for all operation types except credit voucher
-		return nil, errors.New("invalid amount amount should be positive")
+		return nil, errors.New("invalid amount amount should be negative for purchase and withdrawal operations")
 	}
 
 	eventDateTime, err := time.Parse(time.RFC3339, time.Now().Format("2006-01-02T15:04:05.000Z"))
