@@ -18,8 +18,11 @@ func (th *transactionHandler) CreateTransaction(w http.ResponseWriter, r *http.R
 	th.logger.Printf("CreateTransaction request %v\n", trx)
 
 	//validation
-	if trx.Amount == 0 {
+	if trx.Amount == 0 && trx.Balance == 0 {
 		http.Error(w, "Amount cannot be zero", http.StatusBadRequest)
+		return
+	} else if trx.Amount != trx.Balance {
+		http.Error(w, "Amount Balance not equal ", http.StatusBadRequest)
 		return
 	}
 

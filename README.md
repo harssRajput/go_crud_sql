@@ -140,20 +140,22 @@ json response
 json request
 ```json
 {
-  "account_id": 7,
-  "operation_type_id": 1,
-  "amount": -10
+  "account_id": 3,
+  "operation_type_id": 4,
+  "amount": 100,
+  "balance": 100
 }
 ```
 
 json response
 ```json
 {
-  "transaction_id": 7,
-  "account_id": 7,
-  "operation_type_id": 1,
-  "amount": -10,
-  "event_date": "2024-05-28T12:54:05.851Z"
+  "transaction_id": 15,
+  "account_id": 3,
+  "operation_type_id": 4,
+  "amount": 100,
+  "balance": 100,
+  "event_date": "2024-06-05T18:05:20.857Z"
 }
 ```
 

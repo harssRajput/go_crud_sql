@@ -12,7 +12,6 @@ var (
 	DB_NAME     = os.Getenv("DB_NAME")
 )
 
-//
 //var (
 //	HTTP_PORT   = "8080"
 //	DB_USER     = "root"

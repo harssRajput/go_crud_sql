@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS Transaction (
                                            account_id INT NOT NULL,
                                            operation_type_id INT NOT NULL,
                                            amount FLOAT NOT NULL,
+                                           balance FLOAT NOT NULL,
                                            event_date DATETIME NOT NULL,
                                            FOREIGN KEY (account_id) REFERENCES Account(account_id),
     FOREIGN KEY (operation_type_id) REFERENCES Operation_type(operation_type_id)

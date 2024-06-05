@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	log.Println("Starting go-crud application...")
+	log.Println("Starting go-crud application.....")
 	//time.Sleep(15)
 	//log.Println("Sleeped well...")
 	server.RunServer()

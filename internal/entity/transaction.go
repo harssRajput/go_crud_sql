@@ -7,5 +7,6 @@ type Transaction struct {
 	AccountID       int       `json:"account_id"`
 	OperationTypeID int       `json:"operation_type_id"`
 	Amount          float64   `json:"amount"`
+	Balance         float64   `json:"balance"`
 	EventDate       time.Time `json:"event_date"` //event_date contains date and time accurate upto milliseconds in string format "2021-01-01T10:00:00.000Z"
 }
